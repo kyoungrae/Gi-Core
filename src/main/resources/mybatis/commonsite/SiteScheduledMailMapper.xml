@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SiteScheduledMailMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SiteScheduledMail">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY m.system_create_date DESC) as no,
+                m.mail_id,
+                m.title,
+                m.content,
+                m.scheduled_yn,
+                fn_get_common_code_name('scheduled_yn', m.scheduled_yn) as scheduled_yn_name,
+                m.scheduled_ymd,
+                m.scheduled_time,
+                m.state_code,
+                fn_get_common_code_name('scheduled_mail_state_code', m.state_code) as state_code_name,
+                m.failure_reason_code,
+                fn_get_common_code_name('failure_reason_code', m.failure_reason_code) as failure_reason_code_name,
+                m.system_create_userid,
+                m.system_create_date,
+                m.system_update_userid,
+                m.system_update_date,
+                LISTAGG(cg.group_name, ' / ') WITHIN GROUP (ORDER BY cg.group_name) AS target_group
+            FROM SITE_SCHEDULED_MAIL m
+		    LEFT JOIN SITE_SCHEDULED_MAIL_TARGET_GROUP t
+		    ON m.mail_id = t.mail_id
+            LEFT JOIN COMMON_GROUP cg ON t.group_id = cg.group_id
+            GROUP BY
+                m.mail_id,
+                m.title,
+                m.content,
+                m.scheduled_yn,
+                m.scheduled_ymd,
+                m.scheduled_time,
+                m.state_code,
+                m.failure_reason_code,
+                m.system_create_userid,
+                m.system_create_date,
+                m.system_update_userid,
+                m.system_update_date
+        <where>
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="scheduled_yn != null and scheduled_yn != ''">AND scheduled_yn=#{scheduled_yn}</if>
+                <if test="scheduled_ymd != null and scheduled_ymd != ''">AND scheduled_ymd=#{scheduled_ymd}</if>
+                <if test="scheduled_time != null and scheduled_time != ''">AND scheduled_time=#{scheduled_time}</if>
+                <if test="state_code != null and state_code != ''">AND state_code=#{state_code}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+
+        
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_scheduled_yn != null and _scheduled_yn != ''">AND scheduled_yn like '%'||#{_scheduled_yn}||'%'</if>
+                <if test="_scheduled_ymd != null and _scheduled_ymd != ''">AND scheduled_ymd like '%'||#{_scheduled_ymd}||'%'</if>
+                <if test="_scheduled_time != null and _scheduled_time != ''">AND scheduled_time like '%'||#{_scheduled_time}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_SCHEDULED_MAIL
+            <where>
+                
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="scheduled_yn != null and scheduled_yn != ''">AND scheduled_yn=#{scheduled_yn}</if>
+                <if test="scheduled_ymd != null and scheduled_ymd != ''">AND scheduled_ymd=#{scheduled_ymd}</if>
+                <if test="scheduled_time != null and scheduled_time != ''">AND scheduled_time=#{scheduled_time}</if>
+                <if test="state_code != null and state_code != ''">AND state_code=#{state_code}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_scheduled_yn != null and _scheduled_yn != ''">AND scheduled_yn like '%'||#{_scheduled_yn}||'%'</if>
+                <if test="_scheduled_ymd != null and _scheduled_ymd != ''">AND scheduled_ymd like '%'||#{_scheduled_ymd}||'%'</if>
+                <if test="_scheduled_time != null and _scheduled_time != ''">AND scheduled_time like '%'||#{_scheduled_time}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SiteScheduledMail">
+        SELECT
+            rownum AS no,
+             mail_id,
+             title,
+             content,
+             scheduled_yn,
+             fn_get_common_code_name('scheduled_yn', scheduled_yn) as scheduled_yn_name,
+             scheduled_ymd,
+             scheduled_time,
+             state_code,
+             fn_get_common_code_name('scheduled_mail_state_code', state_code) as state_code_name,
+             failure_reason_code,
+            fn_get_common_code_name('failure_reason_code', failure_reason_code) as failure_reason_code_name,
+            system_create_userid,
+             system_create_date,
+             system_update_userid,
+             system_update_date
+        FROM SITE_SCHEDULED_MAIL
+        <where>
+            
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="scheduled_yn != null and scheduled_yn != ''">AND scheduled_yn=#{scheduled_yn}</if>
+                <if test="scheduled_ymd != null and scheduled_ymd != ''">AND scheduled_ymd=#{scheduled_ymd}</if>
+                <if test="scheduled_time != null and scheduled_time != ''">AND scheduled_time=#{scheduled_time}</if>
+                <if test="state_code != null and state_code != ''">AND state_code=#{state_code}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_scheduled_yn != null and _scheduled_yn != ''">AND scheduled_yn like '%'||#{_scheduled_yn}||'%'</if>
+                <if test="_scheduled_ymd != null and _scheduled_ymd != ''">AND scheduled_ymd like '%'||#{_scheduled_ymd}||'%'</if>
+                <if test="_scheduled_time != null and _scheduled_time != ''">AND scheduled_time like '%'||#{_scheduled_time}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO SITE_SCHEDULED_MAIL(
+		    mail_id
+		    , title
+		    , content 
+		    , state_code
+		    , scheduled_yn
+		    , system_create_userid
+		    , system_create_date  
+				<if test="scheduled_ymd != null">, scheduled_ymd</if>
+				<if test="scheduled_time != null">, scheduled_time</if>
+				<if test="failure_reason_code != null">, failure_reason_code</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+				<if test="system_update_date != null">, system_update_date</if>
+		)
+		VALUES(
+            SQ_MAIL_ID.NEXTVAL
+			, #{title}
+			, #{content}  
+			, #{state_code}
+			, #{scheduled_yn}
+			, #{system_create_userid}
+			, systimestamp
+				<if test="scheduled_ymd != null">, #{scheduled_ymd}</if>
+				<if test="scheduled_time != null">, #{scheduled_time}</if>
+				<if test="failure_reason_code != null">, #{failure_reason_code}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+				<if test="system_update_date != null">, #{system_update_date}</if>
+		)
+	</insert>
+
+
+	<insert id="INSERT_AND_RETURN_ID">
+        <selectKey keyProperty="mail_id" resultType="java.lang.String" order="BEFORE">
+            select SQ_MAIL_ID.NEXTVAL from dual
+        </selectKey>
+		INSERT INTO SITE_SCHEDULED_MAIL(
+		    mail_id
+		    , title
+		    , content
+            , state_code
+		    , scheduled_yn
+		    , system_create_userid
+		    , system_create_date
+				<if test="scheduled_ymd != null">, scheduled_ymd</if>
+				<if test="scheduled_time != null">, scheduled_time</if>
+				<if test="failure_reason_code != null">, failure_reason_code</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+				<if test="system_update_date != null">, system_update_date</if>
+		)
+		VALUES(
+            #{mail_id}
+			, #{title}
+			, #{content}
+			, #{state_code}
+			, #{scheduled_yn}
+			, #{system_create_userid}
+			, systimestamp
+				<if test="scheduled_ymd != null">, #{scheduled_ymd}</if>
+				<if test="scheduled_time != null">, #{scheduled_time}</if>
+				<if test="failure_reason_code != null">, #{failure_reason_code}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+				<if test="system_update_date != null">, #{system_update_date}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM SITE_SCHEDULED_MAIL
+		<where>  
+		    AND mail_id = #{mail_id}  
+				<if test="title != null">AND title = #{title}</if>
+				<if test="content != null">AND content = #{content}</if>
+				<if test="scheduled_yn != null">AND scheduled_yn = #{scheduled_yn}</if>
+				<if test="scheduled_ymd != null">AND scheduled_ymd = #{scheduled_ymd}</if>
+				<if test="scheduled_time != null">AND scheduled_time = #{scheduled_time}</if>
+				<if test="state_code != null">AND state_code = #{state_code}</if>
+				<if test="failure_reason_code != null">AND failure_reason_code = #{failure_reason_code}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  SITE_SCHEDULED_MAIL
+			<set>
+                system_update_userid=#{system_update_userid}
+                , system_update_date=systimestamp
+                <if test="title != null">, title=#{title}</if>
+				<if test="content != null">, content=#{content}</if>
+				<if test="scheduled_yn != null">, scheduled_yn=#{scheduled_yn}</if>
+				<if test="scheduled_ymd != null">, scheduled_ymd=#{scheduled_ymd}</if>
+				<if test="scheduled_time != null">, scheduled_time=#{scheduled_time}</if>
+				<if test="state_code != null">, state_code=#{state_code}</if>
+				<if test="failure_reason_code != null">, failure_reason_code=#{failure_reason_code}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+			</set>
+		<where> 
+		    AND mail_id = #{mail_id}  
+		</where>
+	</update>
+
+</mapper>

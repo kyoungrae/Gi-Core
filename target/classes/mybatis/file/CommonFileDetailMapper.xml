@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.file.CommonFileDetailMapper">
+
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.file.CommonFileDetail">
+		SELECT * FROM(
+            SELECT
+                rownum AS no,
+                file_id,
+                uuid,
+                file_name,
+                file_size,
+                file_extension,
+                file_path,
+                file_description,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM COMMON_FILE_DETAIL
+            <where>
+                1=1
+                <if test="file_id != null and file_id != ''">AND file_id=#{file_id}</if>
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="file_name != null and file_name != ''">AND file_name=#{file_name}</if>
+                <if test="file_size != null and file_size != ''">AND file_size=#{file_size}</if>
+                <if test="file_extension != null and file_extension != ''">AND file_extension=#{file_extension}</if>
+                <if test="file_path != null and file_path != ''">AND file_path=#{file_path}</if>
+                <if test="file_description != null and file_description != ''">AND file_description=#{file_description}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+
+                <if test="_file_id != null and file_id != ''">AND file_id like '%'||#{_file_id}||'%'</if>
+                <if test="_uuid != null and uuid != ''">AND uuid like '%'||#{_uuid}||'%'</if>
+                <if test="_file_name != null and file_name != ''">AND file_name like '%'||#{_file_name}||'%'</if>
+                <if test="_file_size != null and file_size != ''">AND file_size like '%'||#{_file_size}||'%'</if>
+                <if test="_file_extension != null and file_extension != ''">AND file_extension like '%'||#{_file_extension}||'%'</if>
+                <if test="_file_path != null and file_path != ''">AND file_path like '%'||#{_file_path}||'%'</if>
+                <if test="_file_description != null and file_description != ''">AND file_description like '%'||#{_file_description}||'%'</if>
+                <if test="_system_create_date != null and system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM COMMON_FILE_DETAIL
+            <where>
+                1=1
+
+                <if test="file_id != null and file_id != ''">AND file_id=#{file_id}</if>
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="file_name != null and file_name != ''">AND file_name=#{file_name}</if>
+                <if test="file_size != null and file_size != ''">AND file_size=#{file_size}</if>
+                <if test="file_extension != null and file_extension != ''">AND file_extension=#{file_extension}</if>
+                <if test="file_path != null and file_path != ''">AND file_path=#{file_path}</if>
+                <if test="file_description != null and file_description != ''">AND file_description=#{file_description}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.file.CommonFileDetail">
+        SELECT
+            rownum AS no,
+             file_id,
+             uuid,
+             file_name,
+             file_size,
+             file_extension,
+             file_path,
+             file_description,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM COMMON_FILE_DETAIL
+        <where>
+            1=1
+            
+                <if test="file_id != null and file_id != ''">AND file_id=#{file_id}</if>
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="file_name != null and file_name != ''">AND file_name=#{file_name}</if>
+                <if test="file_size != null and file_size != ''">AND file_size=#{file_size}</if>
+                <if test="file_extension != null and file_extension != ''">AND file_extension=#{file_extension}</if>
+                <if test="file_path != null and file_path != ''">AND file_path=#{file_path}</if>
+                <if test="file_description != null and file_description != ''">AND file_description=#{file_description}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+<!--            <if test="use_yn != null and use_yn != '' ">AND use_yn = #{use_yn}</if>-->
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO COMMON_FILE_DETAIL(
+			system_create_date
+			, system_update_date 
+		    , file_id 
+		    , uuid  
+				<if test="file_name != null">, file_name</if>
+				<if test="file_size != null">, file_size</if>
+				<if test="file_extension != null">, file_extension</if>
+				<if test="file_path != null">, file_path</if>
+				<if test="file_description != null">, file_description</if>
+				<if test="system_create_date != null">, system_create_date</if>
+				<if test="system_create_userid != null">, system_create_userid</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+			systimestamp
+			, systimestamp 
+			, #{file_id}  
+			, #{uuid}   
+				<if test="file_name != null">, #{file_name}</if>
+				<if test="file_size != null">, #{file_size}</if>
+				<if test="file_extension != null">, #{file_extension}</if>
+				<if test="file_path != null">, #{file_path}</if>
+				<if test="file_description != null">, #{file_description}</if>
+				<if test="system_create_date != null">, #{system_create_date}</if>
+				<if test="system_create_userid != null">, #{system_create_userid}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM COMMON_FILE_DETAIL
+		<where>  
+		    AND file_id = #{file_id}  
+		    AND uuid = #{uuid}  
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  COMMON_FILE_DETAIL
+			<set>
+				system_update_date = systimestamp 
+				<if test="file_name != null">, file_name=#{file_name}</if>
+				<if test="file_size != null">, file_size=#{file_size}</if>
+				<if test="file_extension != null">, file_extension=#{file_extension}</if>
+				<if test="file_path != null">, file_path=#{file_path}</if>
+				<if test="file_description != null">, file_description=#{file_description}</if>
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+				<if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		    AND file_id = #{file_id}  
+		    AND uuid = #{uuid}  
+		</where>
+	</update>
+
+</mapper>

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SitePopupNoticeMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="searchFilter">
+        <if test="from_date != null and from_date.trim().length() > 0">
+            <![CDATA[ AND system_create_date >= TO_DATE(#{from_date}, 'YYYY-MM-DD') ]]>
+        </if>
+        <if test="to_date != null and to_date.trim().length() > 0">
+            <![CDATA[ AND system_create_date < TO_DATE(#{to_date}, 'YYYY-MM-DD') + 1 ]]>
+        </if>
+    </sql>
+
+
+    <select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SitePopupNotice">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                notice_id,
+                title,
+                content,
+                start_ymd,
+                end_ymd,
+                start_time_code,
+                end_time_code,
+                left,
+                top,
+                width,
+                height,
+                use_yn,
+                fn_get_common_code_name('use_yn', use_yn) as use_yn_name,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM SITE_POPUP_NOTICE
+            <where>
+        
+                <if test="notice_id != null and notice_id != ''">AND notice_id=#{notice_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="start_ymd != null and start_ymd != ''">AND start_ymd=#{start_ymd}</if>
+                <if test="end_ymd != null and end_ymd != ''">AND end_ymd=#{end_ymd}</if>
+                <if test="start_time_code != null and start_time_code != ''">AND start_time_code=#{start_time_code}</if>
+                <if test="end_time_code != null and end_time_code != ''">AND end_time_code=#{end_time_code}</if>
+                <if test="left != null and left != ''">AND left=#{left}</if>
+                <if test="top != null and top != ''">AND top=#{top}</if>
+                <if test="width != null and width != ''">AND width=#{width}</if>
+                <if test="height != null and height != ''">AND height=#{height}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_notice_id != null and _notice_id != ''">AND notice_id like '%'||#{_notice_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_start_ymd != null and _start_ymd != ''">AND start_ymd like '%'||#{_start_ymd}||'%'</if>
+                <if test="_end_ymd != null and _end_ymd != ''">AND end_ymd like '%'||#{_end_ymd}||'%'</if>
+                <if test="_start_time_code != null and _start_time_code != ''">AND start_time_code like '%'||#{_start_time_code}||'%'</if>
+                <if test="_end_time_code != null and _end_time_code != ''">AND end_time_code like '%'||#{_end_time_code}||'%'</if>
+                <if test="_left != null and _left != ''">AND left like '%'||#{_left}||'%'</if>
+                <if test="_top != null and _top != ''">AND top like '%'||#{_top}||'%'</if>
+                <if test="_width != null and _width != ''">AND width like '%'||#{_width}||'%'</if>
+                <if test="_height != null and _height != ''">AND height like '%'||#{_height}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <include refid="searchFilter"/>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_POPUP_NOTICE
+            <where>
+                
+                <if test="notice_id != null and notice_id != ''">AND notice_id=#{notice_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="start_ymd != null and start_ymd != ''">AND start_ymd=#{start_ymd}</if>
+                <if test="end_ymd != null and end_ymd != ''">AND end_ymd=#{end_ymd}</if>
+                <if test="start_time_code != null and start_time_code != ''">AND start_time_code=#{start_time_code}</if>
+                <if test="end_time_code != null and end_time_code != ''">AND end_time_code=#{end_time_code}</if>
+                <if test="left != null and left != ''">AND left=#{left}</if>
+                <if test="top != null and top != ''">AND top=#{top}</if>
+                <if test="width != null and width != ''">AND width=#{width}</if>
+                <if test="height != null and height != ''">AND height=#{height}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_notice_id != null and _notice_id != ''">AND notice_id like '%'||#{_notice_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_start_ymd != null and _start_ymd != ''">AND start_ymd like '%'||#{_start_ymd}||'%'</if>
+                <if test="_end_ymd != null and _end_ymd != ''">AND end_ymd like '%'||#{_end_ymd}||'%'</if>
+                <if test="_start_time_code != null and _start_time_code != ''">AND start_time_code like '%'||#{_start_time_code}||'%'</if>
+                <if test="_end_time_code != null and _end_time_code != ''">AND end_time_code like '%'||#{_end_time_code}||'%'</if>
+                <if test="_left != null and _left != ''">AND left like '%'||#{_left}||'%'</if>
+                <if test="_top != null and _top != ''">AND top like '%'||#{_top}||'%'</if>
+                <if test="_width != null and _width != ''">AND width like '%'||#{_width}||'%'</if>
+                <if test="_height != null and _height != ''">AND height like '%'||#{_height}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <include refid="searchFilter"/>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SitePopupNotice">
+        SELECT
+            rownum AS no,
+             notice_id,
+             title,
+             content,
+             start_ymd,
+             end_ymd,
+             start_time_code,
+             end_time_code,
+             left,
+             top,
+             width,
+             height,
+             use_yn,
+             fn_get_common_code_name('use_yn', use_yn) as use_yn_name,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM SITE_POPUP_NOTICE
+        <where>
+            
+                <if test="notice_id != null and notice_id != ''">AND notice_id=#{notice_id}</if>
+                <if test="title != null and title != ''">AND title=#{title}</if>
+                <if test="content != null and content != ''">AND content=#{content}</if>
+                <if test="start_ymd != null and start_ymd != ''">AND start_ymd=#{start_ymd}</if>
+                <if test="end_ymd != null and end_ymd != ''">AND end_ymd=#{end_ymd}</if>
+                <if test="start_time_code != null and start_time_code != ''">AND start_time_code=#{start_time_code}</if>
+                <if test="end_time_code != null and end_time_code != ''">AND end_time_code=#{end_time_code}</if>
+                <if test="left != null and left != ''">AND left=#{left}</if>
+                <if test="top != null and top != ''">AND top=#{top}</if>
+                <if test="width != null and width != ''">AND width=#{width}</if>
+                <if test="height != null and height != ''">AND height=#{height}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_notice_id != null and _notice_id != ''">AND notice_id like '%'||#{_notice_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND content like '%'||#{_content}||'%'</if>
+                <if test="_start_ymd != null and _start_ymd != ''">AND start_ymd like '%'||#{_start_ymd}||'%'</if>
+                <if test="_end_ymd != null and _end_ymd != ''">AND end_ymd like '%'||#{_end_ymd}||'%'</if>
+                <if test="_start_time_code != null and _start_time_code != ''">AND start_time_code like '%'||#{_start_time_code}||'%'</if>
+                <if test="_end_time_code != null and _end_time_code != ''">AND end_time_code like '%'||#{_end_time_code}||'%'</if>
+                <if test="_left != null and _left != ''">AND left like '%'||#{_left}||'%'</if>
+                <if test="_top != null and _top != ''">AND top like '%'||#{_top}||'%'</if>
+                <if test="_width != null and _width != ''">AND width like '%'||#{_width}||'%'</if>
+                <if test="_height != null and _height != ''">AND height like '%'||#{_height}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+    <select id="SELECT_NOTICE_BY_USER_GROUP" resultType="com.gicore.common.common.site.SitePopupNotice">
+        SELECT
+            n.notice_id,
+            n.title,
+            n.content,
+            n.START_YMD,
+            n.END_YMD,
+            n.START_TIME_CODE,
+            n.END_TIME_CODE,
+            n.left,
+            n.TOP,
+            n.width,
+            n.HEIGHT,
+            n.use_yn,
+            n.SYSTEM_CREATE_DATE,
+            n.system_create_userid,
+            n.system_update_date,
+            n.system_update_userid
+        FROM
+            COMMON_USER_GROUP up
+                JOIN
+            SITE_POPUP_NOTICE_TARGET_GROUP nt ON up.group_id = nt.group_id
+                JOIN
+            SITE_POPUP_NOTICE n ON nt.notice_id = n.notice_id
+        WHERE
+            up.user_email = #{user_email}
+            AND n.use_yn = '1'
+            AND n.START_YMD &lt;= TO_CHAR(SYSDATE,'yyyyMMdd')
+            AND n.END_YMD &gt;= TO_CHAR(SYSDATE,'yyyyMMdd')
+            AND TO_CHAR(SYSDATE, 'HH24:MI:SS') BETWEEN n.START_TIME_CODE AND n.END_TIME_CODE
+    </select>
+
+    <select id="SELECT_NOTICE_WITH_TARGET_GROUP" resultType="map">
+        SELECT
+            rownum AS no,
+             s.notice_id,
+             s.title,
+             s.content,
+             s.start_ymd,
+             s.end_ymd,
+             s.start_time_code,
+             s.end_time_code,
+             s.left,
+             s.top,
+             s.width,
+             s.height,
+             s.use_yn,
+             s.system_create_date,
+             s.system_create_userid,
+             s.system_update_date,
+             s.system_update_userid,
+             t.group_id,
+             g.group_name,
+             g.group_level,
+             g.top_group_id
+        FROM
+        SITE_POPUP_NOTICE s
+        LEFT JOIN
+        SITE_POPUP_NOTICE_TARGET_GROUP t
+        ON s.notice_id = t.notice_id
+        LEFT JOIN
+        common_group g
+        ON t.group_id = g.group_id
+        <where>
+                <if test="notice_id != null and notice_id != ''">AND s.notice_id=#{notice_id}</if>
+                <if test="title != null and title != ''">AND s.title=#{title}</if>
+                <if test="content != null and content != ''">AND s.content=#{content}</if>
+                <if test="start_ymd != null and start_ymd != ''">AND s.start_ymd=#{start_ymd}</if>
+                <if test="end_ymd != null and end_ymd != ''">AND s.end_ymd=#{end_ymd}</if>
+                <if test="start_time_code != null and start_time_code != ''">AND s.start_time_code=#{start_time_code}</if>
+                <if test="end_time_code != null and end_time_code != ''">AND s.end_time_code=#{end_time_code}</if>
+                <if test="left != null and left != ''">AND s.left=#{left}</if>
+                <if test="top != null and top != ''">AND s.top=#{top}</if>
+                <if test="width != null and width != ''">AND s.width=#{width}</if>
+                <if test="height != null and height != ''">AND s.height=#{height}</if>
+                <if test="use_yn != null and use_yn != ''">AND s.use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND s.system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND s.system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND s.system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND s.system_update_userid=#{system_update_userid}</if>
+
+                <if test="_notice_id != null and _notice_id != ''">AND s.notice_id like '%'||#{_notice_id}||'%'</if>
+                <if test="_title != null and _title != ''">AND s.title like '%'||#{_title}||'%'</if>
+                <if test="_content != null and _content != ''">AND s.content like '%'||#{_content}||'%'</if>
+                <if test="_start_ymd != null and _start_ymd != ''">AND s.start_ymd like '%'||#{_start_ymd}||'%'</if>
+                <if test="_end_ymd != null and _end_ymd != ''">AND s.end_ymd like '%'||#{_end_ymd}||'%'</if>
+                <if test="_start_time_code != null and _start_time_code != ''">AND s.start_time_code like '%'||#{_start_time_code}||'%'</if>
+                <if test="_end_time_code != null and _end_time_code != ''">AND s.end_time_code like '%'||#{_end_time_code}||'%'</if>
+                <if test="_left != null and _left != ''">AND s.left like '%'||#{_left}||'%'</if>
+                <if test="_top != null and _top != ''">AND s.top like '%'||#{_top}||'%'</if>
+                <if test="_width != null and _width != ''">AND s.width like '%'||#{_width}||'%'</if>
+                <if test="_height != null and _height != ''">AND s.height like '%'||#{_height}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND s.use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND s.system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND s.system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND s.system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND s.system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT" parameterType="com.gicore.common.common.site.SitePopupNotice">
+        <selectKey keyProperty="notice_id" resultType="java.lang.String" order="BEFORE">
+            select SQ_NOTICE_ID.NEXTVAL from dual
+        </selectKey>
+		INSERT INTO SITE_POPUP_NOTICE(
+		    notice_id
+		    , title
+		    , content
+		    , start_ymd
+		    , end_ymd
+		    , start_time_code
+		    , end_time_code
+		    , left
+		    , top
+		    , width
+		    , height
+		    , system_create_date
+		    , system_create_userid
+			, use_yn
+				<if test="system_update_date != null">, system_update_date</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+            #{notice_id}
+			, #{title}
+			, #{content}
+			, #{start_ymd}
+			, #{end_ymd}
+			, #{start_time_code}
+			, #{end_time_code}
+			, #{left}
+			, #{top}
+			, #{width}
+			, #{height}
+			, systimestamp
+			, #{system_create_userid}
+			, #{use_yn}
+				<if test="system_update_date != null">, #{system_update_date}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+    </insert>
+
+	<insert id="INSERT_AND_RETURN_ID" parameterType="com.gicore.common.common.site.SitePopupNotice">
+        <selectKey keyProperty="notice_id" resultType="java.lang.String" order="BEFORE">
+            select SQ_NOTICE_ID.NEXTVAL from dual
+        </selectKey>
+		INSERT INTO SITE_POPUP_NOTICE(
+		    notice_id
+		    , title
+		    , content
+		    , start_ymd
+		    , end_ymd
+		    , start_time_code
+		    , end_time_code
+		    , left
+		    , top
+		    , width
+		    , height
+		    , system_create_date
+		    , system_create_userid
+			, use_yn
+				<if test="system_update_date != null">, system_update_date</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+            SQ_NOTICE_ID.NEXTVAL
+			, #{title}
+			, #{content}
+			, #{start_ymd}
+			, #{end_ymd}
+			, #{start_time_code}
+			, #{end_time_code}
+			, #{left}
+			, #{top}
+			, #{width}
+			, #{height}
+			, systimestamp
+			, #{system_create_userid}
+			, #{use_yn}
+				<if test="system_update_date != null">, #{system_update_date}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+    </insert>
+
+	<delete id="DELETE">
+		DELETE FROM SITE_POPUP_NOTICE
+		<where>  
+		    AND notice_id = #{notice_id}  
+				<if test="title != null">AND title = #{title}</if>
+				<if test="content != null">AND content = #{content}</if>
+				<if test="start_ymd != null">AND start_ymd = #{start_ymd}</if>
+				<if test="end_ymd != null">AND end_ymd = #{end_ymd}</if>
+				<if test="start_time_code != null">AND start_time_code = #{start_time_code}</if>
+				<if test="end_time_code != null">AND end_time_code = #{end_time_code}</if>
+				<if test="left != null">AND left = #{left}</if>
+				<if test="top != null">AND top = #{top}</if>
+				<if test="width != null">AND width = #{width}</if>
+				<if test="height != null">AND height = #{height}</if>
+				<if test="use_yn != null">AND use_yn = #{use_yn}</if>
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+		</where>
+	</delete>
+
+    <select id="GET_LAST_INSERT_ID" resultType="java.lang.String">
+        SELECT SQ_NOTICE_ID.CURRVAL FROM DUAL
+    </select>
+
+	<update id="UPDATE">
+		UPDATE  SITE_POPUP_NOTICE
+			<set>
+				
+				<if test="title != null">, title=#{title}</if>
+				<if test="content != null">, content=#{content}</if>
+				<if test="start_ymd != null">, start_ymd=#{start_ymd}</if>
+				<if test="end_ymd != null">, end_ymd=#{end_ymd}</if>
+				<if test="start_time_code != null">, start_time_code=#{start_time_code}</if>
+				<if test="end_time_code != null">, end_time_code=#{end_time_code}</if>
+				<if test="left != null">, left=#{left}</if>
+				<if test="top != null">, top=#{top}</if>
+				<if test="width != null">, width=#{width}</if>
+				<if test="height != null">, height=#{height}</if>
+				<if test="use_yn != null">, use_yn=#{use_yn}</if>
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+				<if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		    AND notice_id = #{notice_id}  
+		</where>
+	</update>
+
+</mapper>

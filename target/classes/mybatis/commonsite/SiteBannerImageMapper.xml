@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SiteBannerImageMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SiteBannerImage">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                uuid,
+                banner_image_number,
+                use_yn,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM SITE_BANNER_IMAGE
+            <where>
+        
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="banner_image_number != null and banner_image_number != ''">AND banner_image_number=#{banner_image_number}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_uuid != null and _uuid != ''">AND uuid like '%'||#{_uuid}||'%'</if>
+                <if test="_banner_image_number != null and _banner_image_number != ''">AND banner_image_number like '%'||#{_banner_image_number}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_BANNER_IMAGE
+            <where>
+                
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="banner_image_number != null and banner_image_number != ''">AND banner_image_number=#{banner_image_number}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_uuid != null and _uuid != ''">AND uuid like '%'||#{_uuid}||'%'</if>
+                <if test="_banner_image_number != null and _banner_image_number != ''">AND banner_image_number like '%'||#{_banner_image_number}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SiteBannerImage">
+        SELECT
+            rownum AS no,
+             uuid,
+             banner_image_number,
+             use_yn,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM SITE_BANNER_IMAGE
+        <where>
+            
+                <if test="uuid != null and uuid != ''">AND uuid=#{uuid}</if>
+                <if test="banner_image_number != null and banner_image_number != ''">AND banner_image_number=#{banner_image_number}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_uuid != null and _uuid != ''">AND uuid like '%'||#{_uuid}||'%'</if>
+                <if test="_banner_image_number != null and _banner_image_number != ''">AND banner_image_number like '%'||#{_banner_image_number}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+    <select id="SELECT_WITH_FILE" resultType="map">
+        SELECT sbi.uuid,
+               sbi.banner_image_number,
+               sbi.use_yn,
+               cfd.file_id,
+               cfd.file_path,
+               cfd.file_name,
+               cfd.file_extension
+        FROM site_banner_image sbi
+        LEFT JOIN common_file_detail cfd
+        ON sbi.uuid = cfd.uuid
+        AND cfd.system_create_date = (SELECT MAX(system_create_date) FROM common_file_detail WHERE uuid = sbi.uuid)
+        <where>
+               <if test="use_yn != null and use_yn != ''">AND sbi.use_yn = #{use_yn}</if>
+        </where>
+        ORDER BY banner_image_number ASC
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO SITE_BANNER_IMAGE(
+			uuid
+		    , banner_image_number 
+		    , use_yn 
+		    , system_create_date 
+		    , system_create_userid  
+		)
+		VALUES(
+			#{uuid}
+			, #{banner_image_number}  
+			, #{use_yn}  
+			, sysdate
+			, #{system_create_userid}   
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM SITE_BANNER_IMAGE
+		<where>  
+		    AND uuid = #{uuid}  
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  SITE_BANNER_IMAGE
+			<set>
+				system_update_date=sysdate
+				, system_update_userid=#{system_update_userid}
+				<if test="use_yn != null">, use_yn=#{use_yn}</if>
+				<if test="banner_image_number != null">, banner_image_number=#{banner_image_number}</if>
+			</set>
+		<where> 
+		    AND uuid = #{uuid}  
+		</where>
+	</update>
+
+	<update id="SHIFT">
+		UPDATE SITE_BANNER_IMAGE
+			<set>
+                banner_image_number = banner_image_number - 1
+			</set>
+		<where>
+		    AND BANNER_IMAGE_NUMBER <![CDATA[ > ]]> #{banner_image_number}
+		</where>
+	</update>
+
+    <!-- 무결성 에러를 피하기 위해 한번에 update함 -->
+    <update id="REORDER">
+        UPDATE SITE_BANNER_IMAGE
+        SET
+            system_update_date = SYSDATE,
+            system_update_userid = #{list[0].system_update_userid},
+            banner_image_number = CASE
+            <foreach collection="list" item="banner">
+                WHEN uuid = #{banner.uuid} THEN #{banner.banner_image_number}
+            </foreach>
+            END
+        WHERE uuid IN
+            <foreach collection="list" item="banner" separator="," open="(" close=")">
+                #{banner.uuid}
+            </foreach>
+    </update>
+
+</mapper>

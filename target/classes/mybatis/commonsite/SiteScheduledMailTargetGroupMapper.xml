@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SiteScheduledMailTargetGroupMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SiteScheduledMailTargetGroup">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                mail_id,
+                group_id,
+                system_create_userid,
+                system_create_date,
+                system_update_userid,
+                system_update_date
+		    FROM SITE_SCHEDULED_MAIL_TARGET_GROUP
+            <where>
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_SCHEDULED_MAIL_TARGET_GROUP
+            <where>
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SiteScheduledMailTargetGroup">
+        SELECT
+            rownum AS no,
+             mail_id,
+             group_id,
+        (SELECT group_name FROM COMMON_GROUP b where b.group_id = a.group_id) as group_name,
+            system_create_userid,
+            system_create_date,
+            system_update_userid,
+            system_update_date
+        FROM SITE_SCHEDULED_MAIL_TARGET_GROUP a
+        <where>
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+            <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+            <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+            <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO SITE_SCHEDULED_MAIL_TARGET_GROUP(
+			mail_id
+		    group_id,
+            system_create_userid,
+            system_create_date
+		)
+		VALUES(
+			, #{mail_id}  
+			, #{group_id}
+            , #{system_create_userid}
+            , systimestamp
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM SITE_SCHEDULED_MAIL_TARGET_GROUP
+		<where>  
+            <if test="mail_id != null">AND mail_id = #{mail_id}</if>
+            <if test="group_id != null">AND group_id = #{group_id}</if>
+            <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+            <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+            <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  SITE_SCHEDULED_MAIL_TARGET_GROUP
+			<set>
+				<if test="mail_id != null">, mail_id=#{mail_id}</if>
+				<if test="group_id != null">, group_id=#{group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		</where>
+	</update>
+
+    <insert id="INSERT_ALL" parameterType="java.util.List">
+        INSERT INTO SITE_SCHEDULED_MAIL_TARGET_GROUP (
+        mail_id,
+        group_id,
+        system_create_date,
+        system_create_userid
+        )
+        <foreach collection="targetGroups" item="group" separator="UNION ALL">
+            SELECT
+            #{group.mail_id},
+            #{group.group_id},
+            SYSTIMESTAMP,
+            #{group.system_create_userid}
+            FROM DUAL
+        </foreach>
+    </insert>
+
+</mapper>

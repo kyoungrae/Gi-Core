@@ -1,0 +1,80 @@
+create table COMMON_USER
+(
+    ID                   NUMBER(10) not null
+        primary key,
+    EMAIL                VARCHAR2(255 char),
+    PASSWORD             VARCHAR2(255 char),
+    ROLE                 VARCHAR2(255 char)
+        check (role in ('USER', 'ADMIN', 'MANAGER', 'ADMIN_READ', 'ADMIN_CREATE', 'ADMIN_UPDATE', 'ADMIN_DELETE',
+                        'MANAGER_READ', 'MANAGER_CREATE', 'MANAGER_UPDATE', 'MANAGER_DELETE')),
+    USER_ID              VARCHAR2(255 char),
+    OFFICE_CODE          VARCHAR2(7),
+    SYSTEM_CREATE_USERID VARCHAR2(50),
+    SYSTEM_CREATE_DATE   DATE,
+    SYSTEM_UPDATE_USERID VARCHAR2(50),
+    SYSTEM_UPDATE_DATE   DATE,
+    USER_NAME            VARCHAR2(100),
+    TEL                  VARCHAR2(11),
+    ADDRESS              VARCHAR2(100),
+    ADDRESS_DETAIL       VARCHAR2(100),
+    POSTAL_CODE          CHAR(5),
+    UUID                 VARCHAR2(36)
+)
+/
+
+comment on table COMMON_USER is '사용자관리'
+/
+
+comment on column COMMON_USER.ID is '시퀀스 아이디'
+/
+
+comment on column COMMON_USER.EMAIL is '이메일'
+/
+
+comment on column COMMON_USER.PASSWORD is '비밀번호'
+/
+
+comment on column COMMON_USER.ROLE is '역할'
+/
+
+comment on column COMMON_USER.USER_ID is '유저아이디'
+/
+
+comment on column COMMON_USER.OFFICE_CODE is '소속코드'
+/
+
+comment on column COMMON_USER.SYSTEM_CREATE_USERID is '작성자ID'
+/
+
+comment on column COMMON_USER.SYSTEM_CREATE_DATE is '작성일자'
+/
+
+comment on column COMMON_USER.SYSTEM_UPDATE_USERID is '수정자ID'
+/
+
+comment on column COMMON_USER.SYSTEM_UPDATE_DATE is '수정일자'
+/
+
+comment on column COMMON_USER.USER_NAME is '사용자이름'
+/
+
+comment on column COMMON_USER.TEL is '전화번호'
+/
+
+comment on column COMMON_USER.ADDRESS is '주소'
+/
+
+comment on column COMMON_USER.ADDRESS_DETAIL is '주소상세'
+/
+
+comment on column COMMON_USER.POSTAL_CODE is '우편번호'
+/
+
+comment on column COMMON_USER.UUID is '파일ID'
+/
+
+INSERT INTO COMMON_USER (ID, EMAIL, PASSWORD, ROLE, USER_ID, OFFICE_CODE, SYSTEM_CREATE_USERID, SYSTEM_CREATE_DATE, SYSTEM_UPDATE_USERID, SYSTEM_UPDATE_DATE, USER_NAME, TEL, ADDRESS, ADDRESS_DETAIL, POSTAL_CODE, UUID) VALUES (5, 'shmoon@giens.co.kr', '$2a$10$RLNf5Fj01NElDPCoB.sVL.hEGQymdJCXFcLNihVikGs3rhqlKeUqe', 'USER', 'shmoon', '0000000', null, TIMESTAMP '2025-01-06 10:14:32', 'anonymousUser', TIMESTAMP '2025-02-25 17:18:04', '문상혁', '01012344321', null, null, null, '9a22f2d8-dc0e-451f-ac0c-c4cec2b21e73');
+INSERT INTO COMMON_USER (ID, EMAIL, PASSWORD, ROLE, USER_ID, OFFICE_CODE, SYSTEM_CREATE_USERID, SYSTEM_CREATE_DATE, SYSTEM_UPDATE_USERID, SYSTEM_UPDATE_DATE, USER_NAME, TEL, ADDRESS, ADDRESS_DETAIL, POSTAL_CODE, UUID) VALUES (4, 'apages@giens.co.kr', '$2a$10$DhvJCi7GYdQJXXtxcL.vh.NZl9YnClm.EL/P0A7jEBkYuo42QouDq', 'USER', 'apages', '0000000', null, TIMESTAMP '2025-01-06 10:14:35', null, TIMESTAMP '2025-01-15 09:02:44', '진은영', '01012344321', null, null, null, 'e8d92943-9109-4c7e-a0ae-af3078021aae');
+INSERT INTO COMMON_USER (ID, EMAIL, PASSWORD, ROLE, USER_ID, OFFICE_CODE, SYSTEM_CREATE_USERID, SYSTEM_CREATE_DATE, SYSTEM_UPDATE_USERID, SYSTEM_UPDATE_DATE, USER_NAME, TEL, ADDRESS, ADDRESS_DETAIL, POSTAL_CODE, UUID) VALUES (3, 'joo717@giens.co.kr', '$2a$10$KYBwLTJ.2t7TdjIjHEm3wOruOyEgpgiWMsicqLxOEHaM4MAamKmW2', 'USER', 'joo717', '0000000', null, TIMESTAMP '2025-01-06 10:14:36', 'joo717@giens.co.kr', TIMESTAMP '2025-02-20 13:03:40', '이진주', '01012347171', '서울 마포구 가양대로 117', '501호', '03902', '6072ceaa-5cfe-4253-a2bb-3b5b7fb2e22b');
+INSERT INTO COMMON_USER (ID, EMAIL, PASSWORD, ROLE, USER_ID, OFFICE_CODE, SYSTEM_CREATE_USERID, SYSTEM_CREATE_DATE, SYSTEM_UPDATE_USERID, SYSTEM_UPDATE_DATE, USER_NAME, TEL, ADDRESS, ADDRESS_DETAIL, POSTAL_CODE, UUID) VALUES (2, 'sooyeonbae@giens.co.kr', '$2a$10$KYBwLTJ.2t7TdjIjHEm3wOruOyEgpgiWMsicqLxOEHaM4MAamKmW2', 'USER', 'sooyeonbae', '0000000', null, TIMESTAMP '2025-01-06 10:14:37', 'sooyeonbae@giens.co.kr', TIMESTAMP '2025-02-14 10:40:43', '배수연', '01012344321', null, null, null, '38e1f25c-af7c-46c9-8f51-65ffc6da6f63');
+INSERT INTO COMMON_USER (ID, EMAIL, PASSWORD, ROLE, USER_ID, OFFICE_CODE, SYSTEM_CREATE_USERID, SYSTEM_CREATE_DATE, SYSTEM_UPDATE_USERID, SYSTEM_UPDATE_DATE, USER_NAME, TEL, ADDRESS, ADDRESS_DETAIL, POSTAL_CODE, UUID) VALUES (1, 'go66go66@giens.co.kr', '$2a$10$q5bW.exgQN5Gjyh6tDtiQOFcBXXDF63GpftD.VX1N3bdATuRkTaNe', 'USER', 'go66go66', '0000000', null, TIMESTAMP '2025-01-06 10:14:38', 'go66go66@giens.co.kr', TIMESTAMP '2025-02-28 11:38:09', '이경태', '01025463746', '서울특별시', '북아현동', '12345', 'd3799bbc-dafc-41e4-a31f-663abee97280');

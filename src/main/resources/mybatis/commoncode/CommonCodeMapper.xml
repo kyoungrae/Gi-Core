@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.commoncode.CommonCodeMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+    <select id="SELECT_PAGE" resultType="com.gicore.common.common.commoncode.CommonCode">
+        SELECT * FROM(
+        SELECT
+        row_number() over (ORDER BY code_number DESC) as no,
+        code_id,
+        group_id,
+        code_name,
+        code_number,
+        use_yn,
+        system_create_date,
+        system_create_userid,
+        system_update_date,
+        system_update_userid
+        FROM COMMON_CODE
+        <where>
+
+            <if test="code_id != null and code_id != ''">AND code_id=#{code_id}</if>
+            <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+            <if test="code_name != null and code_name != ''">AND code_name=#{code_name}</if>
+            <if test="code_number != null and code_number != ''">AND code_number=#{code_number}</if>
+            <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+            <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+            <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+            <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+
+            <if test="_code_id != null and _code_id != ''">AND code_id like '%'||#{_code_id}||'%'</if>
+            <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+            <if test="_code_name != null and _code_name != ''">AND code_name like '%'||#{_code_name}||'%'</if>
+            <if test="_code_number != null and _code_number != ''">AND code_number like '%'||#{_code_number}||'%'</if>
+            <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+            <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+            <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+            <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+        )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+    </select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+        SELECT CEIL(COUNT(*)/#{row_range}) FROM COMMON_CODE
+        <where>
+
+            <if test="code_id != null and code_id != ''">AND code_id=#{code_id}</if>
+            <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+            <if test="code_name != null and code_name != ''">AND code_name=#{code_name}</if>
+            <if test="code_number != null and code_number != ''">AND code_number=#{code_number}</if>
+            <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+            <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+            <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+            <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+            <if test="_code_id != null and _code_id != ''">AND code_id like '%'||#{_code_id}||'%'</if>
+            <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+            <if test="_code_name != null and _code_name != ''">AND code_name like '%'||#{_code_name}||'%'</if>
+            <if test="_code_number != null and _code_number != ''">AND code_number like '%'||#{_code_number}||'%'</if>
+            <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+            <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+            <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+            <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.commoncode.CommonCode">
+        SELECT
+        rownum AS no,
+        code_id,
+        group_id,
+        code_name,
+        code_number,
+        use_yn,
+        system_create_date,
+        system_create_userid,
+        system_update_date,
+        system_update_userid
+        FROM COMMON_CODE
+        <where>
+
+            <if test="code_id != null and code_id != ''">AND code_id=#{code_id}</if>
+            <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+            <if test="code_name != null and code_name != ''">AND code_name=#{code_name}</if>
+            <if test="code_number != null and code_number != ''">AND code_number=#{code_number}</if>
+            <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+            <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+            <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+            <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+            <if test="_code_id != null and _code_id != ''">AND code_id like '%'||#{_code_id}||'%'</if>
+            <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+            <if test="_code_name != null and _code_name != ''">AND code_name like '%'||#{_code_name}||'%'</if>
+            <if test="_code_number != null and _code_number != ''">AND code_number like '%'||#{_code_number}||'%'</if>
+            <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+            <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+            <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+            <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+        ORDER BY to_number(code_number) ASC
+    </select>
+
+
+    <insert id="INSERT">
+        INSERT INTO COMMON_CODE(
+
+        code_id
+        , group_id
+        , code_name
+        , use_yn
+        , system_create_date
+        , system_create_userid
+        <if test="code_number != null">, code_number</if>
+        <if test="system_update_date != null">, system_update_date</if>
+        <if test="system_update_userid != null">, system_update_userid</if>
+        )
+        VALUES(
+
+         #{code_id}
+        , #{group_id}
+        , #{code_name}
+        , #{use_yn}
+        , sysdate
+        , #{system_create_userid}
+        <if test="code_number != null">, #{code_number}</if>
+        <if test="system_update_date != null">, #{system_update_date}</if>
+        <if test="system_update_userid != null">, #{system_update_userid}</if>
+        )
+    </insert>
+
+
+
+    <delete id="DELETE">
+        DELETE FROM COMMON_CODE
+        <where>
+            AND code_id = #{code_id}
+            AND group_id = #{group_id}
+            <if test="code_name != null">AND #{code_name}</if>
+            <if test="code_number != null">AND #{code_number}</if>
+            <if test="use_yn != null">AND #{use_yn}</if>
+            <if test="system_create_date != null">AND #{system_create_date}</if>
+            <if test="system_create_userid != null">AND #{system_create_userid}</if>
+            <if test="system_update_date != null">AND #{system_update_date}</if>
+            <if test="system_update_userid != null">AND #{system_update_userid}</if>
+        </where>
+    </delete>
+
+
+
+    <update id="UPDATE">
+        UPDATE  COMMON_CODE
+        <set>
+
+            <if test="code_name != null">, code_name=#{code_name}</if>
+            <if test="code_number != null">, code_number=#{code_number}</if>
+            <if test="use_yn != null">, use_yn=#{use_yn}</if>
+            <if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+            <if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+            <if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+            <if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+        </set>
+        <where>
+            AND code_id = #{code_id}
+            AND group_id = #{group_id}
+        </where>
+    </update>
+
+</mapper>

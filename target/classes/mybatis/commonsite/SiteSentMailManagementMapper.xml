@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SiteSentMailManagementMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SiteSentMailManagement">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY m.system_create_date DESC) as no,
+                m.mail_id,
+                m.id,
+                m.state_code,
+                fn_get_common_code_name('sent_mail_state_code', m.state_code) as state_code_name,
+                m.latest_sent_date,
+                TO_CHAR(m.latest_sent_date, 'HH24MI') AS latest_sent_time,
+                m.latest_from_email,
+                m.latest_to_email,
+                m.failure_reason_code,
+                fn_get_common_code_name('sent_mail_failure_reason_code', m.failure_reason_code) as failure_reason_code_name,
+                m.system_create_userid,
+                m.system_create_date,
+                m.system_update_userid,
+                m.system_update_date,
+                s.title
+		    FROM SITE_SENT_MAIL_MANAGEMENT m
+		        LEFT JOIN SITE_SCHEDULED_MAIL s
+		            ON s.mail_id = m.mail_id
+            <where>
+                <if test="mail_id != null and mail_id != ''">AND m.mail_id=#{mail_id}</if>
+                <if test="id != null and id != ''">AND m.id=#{id}</if>
+                <if test="state_code != null and state_code != ''">AND m.state_code=#{state_code}</if>
+                <if test="latest_sent_date != null and latest_sent_date != ''">AND m.latest_sent_date=#{latest_sent_date}</if>
+                <if test="latest_from_email != null and latest_from_email != ''">AND m.latest_from_email=#{latest_from_email}</if>
+                <if test="latest_to_email != null and latest_to_email != ''">AND m.latest_to_email=#{latest_to_email}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND m.failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND m.system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND m.system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND m.system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND m.system_update_date=#{system_update_date}</if>
+
+                <if test="_mail_id != null and _mail_id != ''">AND m.mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_id != null and _id != ''">AND m.id like '%'||#{_id}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND m.state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_latest_sent_date != null and _latest_sent_date != ''">AND m.latest_sent_date like '%'||#{_latest_sent_date}||'%'</if>
+                <if test="_latest_from_email != null and _latest_from_email != ''">AND m.latest_from_email like '%'||#{_latest_from_email}||'%'</if>
+                <if test="_latest_to_email != null and _latest_to_email != ''">AND m.latest_to_email like '%'||#{_latest_to_email}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND m.failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND m.system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND m.system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND m.system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND m.system_update_date like '%'||#{_system_update_date}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_SENT_MAIL_MANAGEMENT
+            <where>
+                
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="id != null and id != ''">AND id=#{id}</if>
+                <if test="state_code != null and state_code != ''">AND state_code=#{state_code}</if>
+                <if test="latest_sent_date != null and latest_sent_date != ''">AND latest_sent_date=#{latest_sent_date}</if>
+                <if test="latest_from_email != null and latest_from_email != ''">AND latest_from_email=#{latest_from_email}</if>
+                <if test="latest_to_email != null and latest_to_email != ''">AND latest_to_email=#{latest_to_email}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_id != null and _id != ''">AND id like '%'||#{_id}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_latest_sent_date != null and _latest_sent_date != ''">AND latest_sent_date like '%'||#{_latest_sent_date}||'%'</if>
+                <if test="_latest_from_email != null and _latest_from_email != ''">AND latest_from_email like '%'||#{_latest_from_email}||'%'</if>
+                <if test="_latest_to_email != null and _latest_to_email != ''">AND latest_to_email like '%'||#{_latest_to_email}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SiteSentMailManagement">
+        SELECT
+            rownum AS no,
+             mail_id,
+             id,
+             state_code,
+             fn_get_common_code_name('sent_mail_state_code', state_code) as state_code_name,
+             latest_sent_date,
+             latest_from_email,
+             latest_to_email,
+             failure_reason_code,
+             fn_get_common_code_name('sent_mail_failure_reason_code', failure_reason_code) as failure_reason_code_name,
+             system_create_userid,
+             system_create_date,
+             system_update_userid,
+             system_update_date
+        FROM SITE_SENT_MAIL_MANAGEMENT
+        <where>
+            
+                <if test="mail_id != null and mail_id != ''">AND mail_id=#{mail_id}</if>
+                <if test="id != null and id != ''">AND id=#{id}</if>
+                <if test="state_code != null and state_code != ''">AND state_code=#{state_code}</if>
+                <if test="latest_sent_date != null and latest_sent_date != ''">AND latest_sent_date=#{latest_sent_date}</if>
+                <if test="latest_from_email != null and latest_from_email != ''">AND latest_from_email=#{latest_from_email}</if>
+                <if test="latest_to_email != null and latest_to_email != ''">AND latest_to_email=#{latest_to_email}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+            
+                <if test="_mail_id != null and _mail_id != ''">AND mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_id != null and _id != ''">AND id like '%'||#{_id}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_latest_sent_date != null and _latest_sent_date != ''">AND latest_sent_date like '%'||#{_latest_sent_date}||'%'</if>
+                <if test="_latest_from_email != null and _latest_from_email != ''">AND latest_from_email like '%'||#{_latest_from_email}||'%'</if>
+                <if test="_latest_to_email != null and _latest_to_email != ''">AND latest_to_email like '%'||#{_latest_to_email}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+        </where>
+    </select>
+
+    <select id="SELECT_WITH_MAIL_AND_USER" resultType="com.gicore.common.common.site.SiteSentMailManagement">
+        SELECT
+            rownum AS no,
+             s.mail_id,
+             s.id,
+             s.state_code,
+             fn_get_common_code_name('sent_mail_state_code', s.state_code) as state_code_name,
+             s.latest_sent_date,
+             s.latest_from_email,
+             s.latest_to_email,
+             s.failure_reason_code,
+             fn_get_common_code_name('sent_mail_failure_reason_code', s.failure_reason_code) as failure_reason_code_name,
+             s.system_create_userid,
+             s.system_create_date,
+             s.system_update_userid,
+             s.system_update_date,
+             m.title,
+            m.content,
+            u.email
+        FROM SITE_SENT_MAIL_MANAGEMENT s
+            LEFT JOIN SITE_SCHEDULED_MAIL m
+        ON s.mail_id = m.mail_id
+            LEFT JOIN COMMON_USER u
+        ON s.id = u.id
+        <where>
+
+                <if test="mail_id != null and mail_id != ''">AND s.mail_id=#{mail_id}</if>
+                <if test="id != null and id != ''">AND s.id=#{id}</if>
+                <if test="state_code != null and state_code != ''">AND s.state_code=#{state_code}</if>
+                <if test="latest_sent_date != null and latest_sent_date != ''">AND s.latest_sent_date=#{latest_sent_date}</if>
+                <if test="latest_from_email != null and latest_from_email != ''">AND s.latest_from_email=#{latest_from_email}</if>
+                <if test="latest_to_email != null and latest_to_email != ''">AND s.latest_to_email=#{latest_to_email}</if>
+                <if test="failure_reason_code != null and failure_reason_code != ''">AND s.failure_reason_code=#{failure_reason_code}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND s.system_create_userid=#{system_create_userid}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND s.system_create_date=#{system_create_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND s.system_update_userid=#{system_update_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND s.system_update_date=#{system_update_date}</if>
+
+                <if test="_mail_id != null and _mail_id != ''">AND s.mail_id like '%'||#{_mail_id}||'%'</if>
+                <if test="_id != null and _id != ''">AND s.id like '%'||#{_id}||'%'</if>
+                <if test="_state_code != null and _state_code != ''">AND s.state_code like '%'||#{_state_code}||'%'</if>
+                <if test="_latest_sent_date != null and _latest_sent_date != ''">AND s.latest_sent_date like '%'||#{_latest_sent_date}||'%'</if>
+                <if test="_latest_from_email != null and _latest_from_email != ''">AND s.latest_from_email like '%'||#{_latest_from_email}||'%'</if>
+                <if test="_latest_to_email != null and _latest_to_email != ''">AND s.latest_to_email like '%'||#{_latest_to_email}||'%'</if>
+                <if test="_failure_reason_code != null and _failure_reason_code != ''">AND s.failure_reason_code like '%'||#{_failure_reason_code}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND s.system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND s.system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND s.system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND s.system_update_date like '%'||#{_system_update_date}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO SITE_SENT_MAIL_MANAGEMENT(
+			mail_id
+		    , id 
+		    , state_code 
+		    , system_create_userid 
+		    , system_create_date  
+			, latest_sent_date
+			, latest_from_email
+			, latest_to_email
+				<if test="failure_reason_code != null">, failure_reason_code</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+				<if test="system_update_date != null">, system_update_date</if>
+		)
+		SELECT
+			#{mail_id}
+			, id
+			, #{state_code}  
+			, #{system_create_userid}
+			, systimestamp
+			, systimestamp
+			, #{latest_from_email}
+			, #{latest_to_email}
+				<if test="failure_reason_code != null">, #{failure_reason_code}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+				<if test="system_update_date != null">, #{system_update_date}</if>
+        FROM COMMON_USER
+        WHERE email = #{latest_to_email}
+        AND ROWNUM = 1
+	</insert>
+
+	<insert id="INSERT_ALL">
+        <foreach collection="logList" item="log" separator=";">
+		INSERT INTO SITE_SENT_MAIL_MANAGEMENT(
+			mail_id
+		    , id
+		    , state_code
+		    , system_create_userid
+		    , system_create_date
+			, latest_sent_date
+			, latest_from_email
+			, latest_to_email
+		)
+		SELECT
+            #{log.mail_id}
+            , id
+            , #{log.state_code}
+            , #{log.system_create_userid}
+            , systimestamp
+            , systimestamp
+            , #{log.latest_from_email}
+            , #{log.latest_to_email}
+        FROM COMMON_USER
+        WHERE email = #{log.latest_to_email}
+        AND ROWNUM = 1
+        </foreach>
+    </insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM SITE_SENT_MAIL_MANAGEMENT
+		<where>  
+				<if test="mail_id != null">AND mail_id = #{mail_id}</if>
+				<if test="id != null">AND id = #{id}</if>
+				<if test="state_code != null">AND state_code = #{state_code}</if>
+				<if test="latest_sent_date != null">AND latest_sent_date = #{latest_sent_date}</if>
+				<if test="latest_from_email != null">AND latest_from_email = #{latest_from_email}</if>
+				<if test="latest_to_email != null">AND latest_to_email = #{latest_to_email}</if>
+				<if test="failure_reason_code != null">AND failure_reason_code = #{failure_reason_code}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  SITE_SENT_MAIL_MANAGEMENT
+			<set>
+                system_update_userid=#{system_update_userid}
+                , system_update_date=SYSTIMESTAMP
+				<if test="state_code != null">, state_code=#{state_code}</if>
+				<if test="latest_sent_date != null">, latest_sent_date=#{latest_sent_date}</if>
+				<if test="latest_from_email != null">, latest_from_email=#{latest_from_email}</if>
+				<if test="latest_to_email != null">, latest_to_email=#{latest_to_email}</if>
+				<if test="failure_reason_code != null">, failure_reason_code=#{failure_reason_code}</if>
+			</set>
+		WHERE
+             mail_id=#{mail_id}
+             AND id=#{id}
+	</update>
+
+    <update id="UPDATE_BY_RESULT">
+        <foreach collection="logList" item="log" separator=" ">
+            UPDATE SITE_SENT_MAIL_MANAGEMENT
+            SET
+            state_code = #{log.state_code},
+            system_update_date = SYSTIMESTAMP
+            <if test="log.failure_reason_code != null">, failure_reason_code = #{log.failure_reason_code}</if>
+            WHERE
+            mail_id = #{log.mail_id}
+            AND latest_to_email = #{log.latest_to_email}
+        </foreach>
+    </update>
+
+
+</mapper>

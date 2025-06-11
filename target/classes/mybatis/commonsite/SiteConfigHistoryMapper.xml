@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.site.SiteConfigHistoryMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.site.SiteConfigHistory">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                config_group_id,
+                config_key,
+                config_value,
+                description,
+                use_yn,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM SITE_CONFIG_HISTORY
+            <where>
+        
+                <if test="config_group_id != null and config_group_id != ''">AND config_group_id=#{config_group_id}</if>
+                <if test="config_key != null and config_key != ''">AND config_key=#{config_key}</if>
+                <if test="config_value != null and config_value != ''">AND config_value=#{config_value}</if>
+                <if test="description != null and description != ''">AND description=#{description}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_config_group_id != null and _config_group_id != ''">AND config_group_id like '%'||#{_config_group_id}||'%'</if>
+                <if test="_config_key != null and _config_key != ''">AND config_key like '%'||#{_config_key}||'%'</if>
+                <if test="_config_value != null and _config_value != ''">AND config_value like '%'||#{_config_value}||'%'</if>
+                <if test="_description != null and _description != ''">AND description like '%'||#{_description}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM SITE_CONFIG_HISTORY
+            <where>
+                
+                <if test="config_group_id != null and config_group_id != ''">AND config_group_id=#{config_group_id}</if>
+                <if test="config_key != null and config_key != ''">AND config_key=#{config_key}</if>
+                <if test="config_value != null and config_value != ''">AND config_value=#{config_value}</if>
+                <if test="description != null and description != ''">AND description=#{description}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_config_group_id != null and _config_group_id != ''">AND config_group_id like '%'||#{_config_group_id}||'%'</if>
+                <if test="_config_key != null and _config_key != ''">AND config_key like '%'||#{_config_key}||'%'</if>
+                <if test="_config_value != null and _config_value != ''">AND config_value like '%'||#{_config_value}||'%'</if>
+                <if test="_description != null and _description != ''">AND description like '%'||#{_description}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.site.SiteConfigHistory">
+        SELECT
+            rownum AS no,
+             config_group_id,
+             config_key,
+             config_value,
+             description,
+             use_yn,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM SITE_CONFIG_HISTORY
+        <where>
+            
+                <if test="config_group_id != null and config_group_id != ''">AND config_group_id=#{config_group_id}</if>
+                <if test="config_key != null and config_key != ''">AND config_key=#{config_key}</if>
+                <if test="config_value != null and config_value != ''">AND config_value=#{config_value}</if>
+                <if test="description != null and description != ''">AND description=#{description}</if>
+                <if test="use_yn != null and use_yn != ''">AND use_yn=#{use_yn}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_config_group_id != null and _config_group_id != ''">AND config_group_id like '%'||#{_config_group_id}||'%'</if>
+                <if test="_config_key != null and _config_key != ''">AND config_key like '%'||#{_config_key}||'%'</if>
+                <if test="_config_value != null and _config_value != ''">AND config_value like '%'||#{_config_value}||'%'</if>
+                <if test="_description != null and _description != ''">AND description like '%'||#{_description}||'%'</if>
+                <if test="_use_yn != null and _use_yn != ''">AND use_yn like '%'||#{_use_yn}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO SITE_CONFIG_HISTORY(
+			
+		    , config_group_id 
+		    , config_key 
+		    , config_value 
+		    , use_yn  
+				<if test="description != null">, description</if>
+				<if test="system_create_date != null">, system_create_date</if>
+				<if test="system_create_userid != null">, system_create_userid</if>
+				<if test="system_update_date != null">, system_update_date</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+			
+			, #{config_group_id}  
+			, #{config_key}  
+			, #{config_value}  
+			, #{use_yn}   
+				<if test="description != null">, #{description}</if>
+				<if test="system_create_date != null">, #{system_create_date}</if>
+				<if test="system_create_userid != null">, #{system_create_userid}</if>
+				<if test="system_update_date != null">, #{system_update_date}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM SITE_CONFIG_HISTORY
+		<where>  
+		    AND config_key = #{config_key}  
+				<if test="config_group_id != null">AND config_group_id = #{config_group_id}</if>
+				<if test="config_value != null">AND config_value = #{config_value}</if>
+				<if test="description != null">AND description = #{description}</if>
+				<if test="use_yn != null">AND use_yn = #{use_yn}</if>
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  SITE_CONFIG_HISTORY
+			<set>
+				
+				<if test="config_group_id != null">, config_group_id=#{config_group_id}</if>
+				<if test="config_value != null">, config_value=#{config_value}</if>
+				<if test="description != null">, description=#{description}</if>
+				<if test="use_yn != null">, use_yn=#{use_yn}</if>
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+				<if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		    AND config_key = #{config_key}  
+		</where>
+	</update>
+
+</mapper>

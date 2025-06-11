@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.file.CommonFileMapper">
+    <insert id="COMMON_FILE_INSERT" parameterType="com.gicore.common.common.file.CommonFile">
+        INSERT INTO COMMON_FILE(
+            uuid
+            <if test="file_description != null and file_description != ''">,file_description</if>
+            ,system_create_userid
+            ,system_create_date
+        )VALUES(
+            #{uuid}
+            <if test="file_description != null and file_description != ''">,#{file_description}</if>
+            ,#{system_create_userid}
+            ,sysdate
+        )
+    </insert>
+    <select id="COMMON_FILE_SELECT"  resultType="com.gicore.common.common.file.CommonFile">
+        SELECT
+            uuid
+            ,file_description
+            ,system_create_userid
+            ,TO_CHAR(system_create_date,'yyyy-MM-dd') AS system_create_date
+        FROM COMMON_FILE
+        <where>
+            1 = 1
+            <if test="uuid != null and uuid != ''">AND uuid = #{uuid}</if>
+            <if test="file_description != null and file_description != ''">AND file_description like '%'||#{file_description}||'%'</if>
+            <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid = #{system_create_userid}</if>
+            <if test="system_create_date != null and system_create_date != ''">AND TO_CHAR(system_create_date,'yyyy-MM-dd') = #{system_create_date}</if>
+        </where>
+    </select>
+
+    <delete id="COMMON_FILE_DELETE">
+        DELETE FROM COMMON_FILE
+        <where>
+            AND 1 = 1
+            AND uuid = #{uuid}
+        </where>
+    </delete>
+</mapper>

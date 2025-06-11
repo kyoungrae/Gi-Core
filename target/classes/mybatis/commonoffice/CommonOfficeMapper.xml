@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.office.CommonOfficeMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.office.CommonOffice">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                top_office_code,
+                office_name,
+                office_code,
+                office_type,
+                office_type_code,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM COMMON_OFFICE
+            <where>
+        
+                <if test="top_office_code != null and top_office_code != ''">AND top_office_code=#{top_office_code}</if>
+                <if test="office_name != null and office_name != ''">AND office_name=#{office_name}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="office_type != null and office_type != ''">AND office_type=#{office_type}</if>
+                <if test="office_type_code != null and office_type_code != ''">AND office_type_code=#{office_type_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_top_office_code != null and _top_office_code != ''">AND top_office_code like '%'||#{_top_office_code}||'%'</if>
+                <if test="_office_name != null and _office_name != ''">AND office_name like '%'||#{_office_name}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_office_type != null and _office_type != ''">AND office_type like '%'||#{_office_type}||'%'</if>
+                <if test="_office_type_code != null and _office_type_code != ''">AND office_type_code like '%'||#{_office_type_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM COMMON_OFFICE
+            <where>
+                
+                <if test="top_office_code != null and top_office_code != ''">AND top_office_code=#{top_office_code}</if>
+                <if test="office_name != null and office_name != ''">AND office_name=#{office_name}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="office_type != null and office_type != ''">AND office_type=#{office_type}</if>
+                <if test="office_type_code != null and office_type_code != ''">AND office_type_code=#{office_type_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_top_office_code != null and _top_office_code != ''">AND top_office_code like '%'||#{_top_office_code}||'%'</if>
+                <if test="_office_name != null and _office_name != ''">AND office_name like '%'||#{_office_name}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_office_type != null and _office_type != ''">AND office_type like '%'||#{_office_type}||'%'</if>
+                <if test="_office_type_code != null and _office_type_code != ''">AND office_type_code like '%'||#{_office_type_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.office.CommonOffice">
+        SELECT
+            rownum AS no,
+            top_office_code,
+            office_name,
+            office_code,
+            office_type,
+            office_type_code,
+            system_create_date,
+            system_create_userid,
+            system_update_date,
+            system_update_userid
+        FROM COMMON_OFFICE
+        <where>
+            
+                <if test="top_office_code != null and top_office_code != ''">AND top_office_code=#{top_office_code}</if>
+                <if test="office_name != null and office_name != ''">AND office_name=#{office_name}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="office_type != null and office_type != ''">AND office_type=#{office_type}</if>
+                <if test="office_type_code != null and office_type_code != ''">AND office_type_code=#{office_type_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_top_office_code != null and _top_office_code != ''">AND top_office_code like '%'||#{_top_office_code}||'%'</if>
+                <if test="_office_name != null and _office_name != ''">AND office_name like '%'||#{_office_name}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_office_type != null and _office_type != ''">AND office_type like '%'||#{_office_type}||'%'</if>
+                <if test="_office_type_code != null and _office_type_code != ''">AND office_type_code like '%'||#{_office_type_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO COMMON_OFFICE(
+			
+		    top_office_code
+		    , office_name 
+		    , office_code
+            , system_create_date
+            , system_create_userid
+				<if test="office_type != null">, office_type</if>
+				<if test="office_type_code != null">, office_type_code</if>
+		)
+		VALUES(
+			
+			 #{top_office_code}
+			, #{office_name}  
+			, #{office_code}   
+			, sysdate
+			, #{system_create_userid}
+				<if test="office_type != null">, #{office_type}</if>
+				<if test="office_type_code != null">, #{office_type_code}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM COMMON_OFFICE
+		<where>  
+		    AND office_code = #{office_code}  
+				<if test="top_office_code != null">AND top_office_code = #{top_office_code}</if>
+				<if test="office_name != null">AND office_name = #{office_name}</if>
+				<if test="office_type != null">AND office_type = #{office_type}</if>
+				<if test="office_type_code != null">AND office_type_code = #{office_type_code}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  COMMON_OFFICE
+			<set>
+                system_update_date = sysdate
+                ,system_update_userid =#{system_update_userid}
+				<if test="top_office_code != null">, top_office_code=#{top_office_code}</if>
+				<if test="office_name != null">, office_name=#{office_name}</if>
+				<if test="office_type != null">, office_type=#{office_type}</if>
+				<if test="office_type_code != null">, office_type_code=#{office_type_code}</if>
+
+			</set>
+		<where> 
+		    AND office_code = #{office_code}  
+		</where>
+	</update>
+
+</mapper>

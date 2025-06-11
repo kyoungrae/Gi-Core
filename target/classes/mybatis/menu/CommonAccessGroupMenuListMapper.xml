@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.menu.CommonAccessGroupMenuListMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.menu.CommonAccessGroupMenuList">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                menu_code,
+                access_rights_group_id,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM COMMON_ACCESS_GROUP_MENU_LIST
+            <where>
+        
+                <if test="menu_code != null and menu_code != ''">AND menu_code=#{menu_code}</if>
+                <if test="access_rights_group_id != null and access_rights_group_id != ''">AND access_rights_group_id=#{access_rights_group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_menu_code != null and _menu_code != ''">AND menu_code like '%'||#{_menu_code}||'%'</if>
+                <if test="_access_rights_group_id != null and _access_rights_group_id != ''">AND access_rights_group_id like '%'||#{_access_rights_group_id}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM COMMON_ACCESS_GROUP_MENU_LIST
+            <where>
+                
+                <if test="menu_code != null and menu_code != ''">AND menu_code=#{menu_code}</if>
+                <if test="access_rights_group_id != null and access_rights_group_id != ''">AND access_rights_group_id=#{access_rights_group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_menu_code != null and _menu_code != ''">AND menu_code like '%'||#{_menu_code}||'%'</if>
+                <if test="_access_rights_group_id != null and _access_rights_group_id != ''">AND access_rights_group_id like '%'||#{_access_rights_group_id}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.menu.CommonAccessGroupMenuList">
+        SELECT
+            rownum AS no,
+             menu_code,
+             access_rights_group_id,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM COMMON_ACCESS_GROUP_MENU_LIST
+        <where>
+            
+                <if test="menu_code != null and menu_code != ''">AND menu_code=#{menu_code}</if>
+                <if test="access_rights_group_id != null and access_rights_group_id != ''">AND access_rights_group_id=#{access_rights_group_id}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="_menu_code != null and _menu_code != ''">AND menu_code like '%'||#{_menu_code}||'%'</if>
+                <if test="_access_rights_group_id != null and _access_rights_group_id != ''">AND access_rights_group_id like '%'||#{_access_rights_group_id}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO COMMON_ACCESS_GROUP_MENU_LIST(
+		    menu_code
+		    , access_rights_group_id  
+			, system_create_date
+			, system_create_userid
+				<if test="system_update_date != null">, system_update_date</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+			#{menu_code}
+			, #{access_rights_group_id}   
+			, systimestamp
+			, #{system_create_userid}
+				<if test="system_update_date != null">, #{system_update_date}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM COMMON_ACCESS_GROUP_MENU_LIST
+		<where>  
+		    AND menu_code = #{menu_code}  
+		    AND access_rights_group_id = #{access_rights_group_id}  
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+		</where>
+	</delete>
+
+	<update id="UPDATE">
+		UPDATE  COMMON_ACCESS_GROUP_MENU_LIST
+			<set>
+				
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+				<if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		    AND menu_code = #{menu_code}  
+		    AND access_rights_group_id = #{access_rights_group_id}  
+		</where>
+	</update>
+
+    <!-- - - - - - -->
+    <delete id="DELETE_ALL">
+        DELETE FROM COMMON_ACCESS_GROUP_MENU_LIST
+        <where>
+            menu_code = #{menu_code}
+        </where>
+    </delete>
+
+</mapper>

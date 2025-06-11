@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gicore.common.common.usergroup.CommonUserGroupMapper">
+    <sql id="sortFilter">
+        ORDER BY
+        <choose>
+            <when test="sort_id != null and sort_id != null">
+                ${sort_id} ${sort_order}
+            </when>
+            <otherwise>
+                system_create_date DESC
+            </otherwise>
+        </choose>
+    </sql>
+	<select id="SELECT_PAGE" resultType="com.gicore.common.common.usergroup.CommonUserGroup">
+		SELECT * FROM(
+            SELECT
+                row_number() over (ORDER BY system_create_date DESC) as no,
+                id,
+                group_id,
+                user_email,
+                user_id,
+                office_code,
+                FN_GET_OFFICE_NAME(office_code) office_name,
+                system_create_date,
+                system_create_userid,
+                system_update_date,
+                system_update_userid
+		    FROM COMMON_USER_GROUP
+            <where>
+        
+                <if test="id != null and id != ''">AND id=#{id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="user_email != null and user_email != ''">AND user_email=#{user_email}</if>
+                <if test="user_id != null and user_id != ''">AND user_id=#{user_id}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+
+        
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+                <if test="_user_email != null and _user_email != ''">AND user_email like '%'||#{_user_email}||'%'</if>
+                <if test="_user_id != null and _user_id != ''">AND user_id like '%'||#{_user_id}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+	    )
+        <where>
+            no BETWEEN ((#{page_no} -1) * #{row_range} + 1) AND (#{row_range} * #{page_no})
+        </where>
+        <include refid="sortFilter"/>
+	</select>
+
+    <select id="SELECT_PAGING_TOTAL_NUMBER" resultType="int">
+            SELECT CEIL(COUNT(*)/#{row_range}) FROM COMMON_USER_GROUP
+            <where>
+                
+                <if test="id != null and id != ''">AND id=#{id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="user_email != null and user_email != ''">AND user_email=#{user_email}</if>
+                <if test="user_id != null and user_id != ''">AND user_id=#{user_id}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+                
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+                <if test="_user_email != null and _user_email != ''">AND user_email like '%'||#{_user_email}||'%'</if>
+                <if test="_user_id != null and _user_id != ''">AND user_id like '%'||#{_user_id}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+            </where>
+    </select>
+
+    <select id="SELECT" resultType="com.gicore.common.common.usergroup.CommonUserGroup">
+        SELECT
+            rownum AS no,
+             id,
+             group_id,
+             (SELECT group_name FROM COMMON_GROUP b where b.group_id = a.group_id) as group_name,
+             (SELECT user_name FROM COMMON_USER c where c.id = a.id) as user_name,
+             user_email,
+             user_id,
+             office_code,
+             system_create_date,
+             system_create_userid,
+             system_update_date,
+             system_update_userid
+        FROM COMMON_USER_GROUP a
+        <where>
+            
+                <if test="id != null and id != ''">AND id=#{id}</if>
+                <if test="group_id != null and group_id != ''">AND group_id=#{group_id}</if>
+                <if test="user_email != null and user_email != ''">AND user_email=#{user_email}</if>
+                <if test="user_id != null and user_id != ''">AND user_id=#{user_id}</if>
+                <if test="office_code != null and office_code != ''">AND office_code=#{office_code}</if>
+                <if test="system_create_date != null and system_create_date != ''">AND system_create_date=#{system_create_date}</if>
+                <if test="system_create_userid != null and system_create_userid != ''">AND system_create_userid=#{system_create_userid}</if>
+                <if test="system_update_date != null and system_update_date != ''">AND system_update_date=#{system_update_date}</if>
+                <if test="system_update_userid != null and system_update_userid != ''">AND system_update_userid=#{system_update_userid}</if>
+            
+                <if test="id != null and id != ''">AND id like '%'||#{_id}||'%'</if>
+                <if test="_group_id != null and _group_id != ''">AND group_id like '%'||#{_group_id}||'%'</if>
+                <if test="_user_email != null and _user_email != ''">AND user_email like '%'||#{_user_email}||'%'</if>
+                <if test="_user_id != null and _user_id != ''">AND user_id like '%'||#{_user_id}||'%'</if>
+                <if test="_office_code != null and _office_code != ''">AND office_code like '%'||#{_office_code}||'%'</if>
+                <if test="_system_create_date != null and _system_create_date != ''">AND system_create_date like '%'||#{_system_create_date}||'%'</if>
+                <if test="_system_create_userid != null and _system_create_userid != ''">AND system_create_userid like '%'||#{_system_create_userid}||'%'</if>
+                <if test="_system_update_date != null and _system_update_date != ''">AND system_update_date like '%'||#{_system_update_date}||'%'</if>
+                <if test="_system_update_userid != null and _system_update_userid != ''">AND system_update_userid like '%'||#{_system_update_userid}||'%'</if>
+        </where>
+    </select>
+
+
+	<insert id="INSERT">
+		INSERT INTO COMMON_USER_GROUP(
+
+             id
+		    ,group_id
+		    , user_email
+		    , user_id 
+		    , office_code 
+		    , system_create_date 
+		    , system_create_userid  
+				<if test="system_update_date != null">, system_update_date</if>
+				<if test="system_update_userid != null">, system_update_userid</if>
+		)
+		VALUES(
+			
+			 #{id}
+			,#{group_id}
+			, #{user_email}
+			, #{user_id}  
+			, #{office_code}  
+			, SYSDATE
+			, #{system_create_userid}   
+				<if test="system_update_date != null">, #{system_update_date}</if>
+				<if test="system_update_userid != null">, #{system_update_userid}</if>
+		)
+	</insert>
+
+
+
+	<delete id="DELETE">
+		DELETE FROM COMMON_USER_GROUP
+		<where>  
+		    AND id = #{id}
+		    AND group_id = #{group_id}
+				<if test="user_email != null">AND user_email = #{user_email}</if>
+				<if test="user_id != null">AND user_id = #{user_id}</if>
+				<if test="office_code != null">AND office_code = #{office_code}</if>
+				<if test="system_create_date != null">AND system_create_date = #{system_create_date}</if>
+				<if test="system_create_userid != null">AND system_create_userid = #{system_create_userid}</if>
+				<if test="system_update_date != null">AND system_update_date = #{system_update_date}</if>
+				<if test="system_update_userid != null">AND system_update_userid = #{system_update_userid}</if>
+		</where>
+	</delete>
+
+
+
+	<update id="UPDATE">
+		UPDATE  COMMON_USER_GROUP
+			<set>
+                <if test="user_email != null">, user_email = #{user_email}</if>
+				<if test="user_id != null">, user_id=#{user_id}</if>
+				<if test="office_code != null">, office_code=#{office_code}</if>
+				<if test="system_create_date != null">, system_create_date=#{system_create_date}</if>
+				<if test="system_create_userid != null">, system_create_userid=#{system_create_userid}</if>
+				<if test="system_update_date != null">, system_update_date=#{system_update_date}</if>
+				<if test="system_update_userid != null">, system_update_userid=#{system_update_userid}</if>
+			</set>
+		<where> 
+		    AND id = #{id}
+		    AND group_id = #{group_id}
+		</where>
+	</update>
+
+    <update id="INSERT_OR_UPDATE">
+        MERGE INTO COMMON_USER_GROUP U
+        USING (SELECT #{id} AS id, #{group_id} AS group_id FROM DUAL) S
+        ON (U.id = S.id AND U.group_id = S.group_id)
+        WHEN MATCHED THEN
+            UPDATE SET
+                       U.user_email = #{user_email},
+                       U.user_id = #{user_id},
+                       U.office_code = #{office_code},
+                       U.system_update_date = SYSDATE,
+                       U.system_update_userid = #{system_update_userid}
+        WHEN NOT MATCHED THEN
+            INSERT (
+                id,
+                group_id,
+                user_email,
+                user_id,
+                office_code,
+                system_create_date,
+                system_create_userid
+                    <if test="system_update_date != null">, system_update_date</if>
+            <if test="system_update_userid != null">, system_update_userid</if>
+        ) VALUES (
+        #{id},
+        #{group_id},
+        #{user_email},
+        #{user_id},
+        #{office_code},
+        SYSDATE,
+        #{system_create_userid}
+        <if test="system_update_date != null">, #{system_update_date}</if>
+        <if test="system_update_userid != null">, #{system_update_userid}</if>
+        )
+    </update>
+
+    <select id="SELECT_BY_GROUP_ID_LIST" resultType="com.gicore.common.common.usergroup.CommonUserGroup">
+        SELECT
+        rownum AS no,
+        id,
+        group_id,
+        (SELECT group_name FROM COMMON_GROUP b where b.group_id = a.group_id) as group_name,
+        (SELECT user_name FROM COMMON_USER c where c.id = a.id) as user_name,
+        user_email,
+        user_id,
+        office_code,
+        system_create_date,
+        system_create_userid,
+        system_update_date,
+        system_update_userid
+        FROM COMMON_USER_GROUP a
+        WHERE group_id IN
+        <foreach collection="targetGroups" item="group"  index="index" open="(" separator="," close=")">
+            #{group}
+        </foreach>
+    </select>
+
+</mapper>
