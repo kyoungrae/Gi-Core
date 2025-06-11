@@ -1,2 +1,0 @@
-# Gi-Core  
-Gi-code
