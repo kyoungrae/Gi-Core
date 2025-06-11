@@ -4189,3 +4189,203 @@ io.jsonwebtoken.ExpiredJwtException: JWT expired at 2025-06-10T10:16:10Z. Curren
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-10.1.16.jar:10.1.16]
 	at java.base/java.lang.Thread.run(Thread.java:1589) [?:?]
 2025-06-11T15:31:37.972+09:00 WARN  6606 --- [][http-nio-8080-exec-1] HandlerMappingIntrospector:454 - Cache miss for ERROR dispatch to '/error' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2025-06-11T15:32:20.269+09:00 DEBUG 6606 --- [][http-nio-8080-exec-5] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+4. SELECT FILE_ID || '.' || COMMON_FILE_DETAIL.FILE_EXTENSION
+        FROM COMMON_FILE_DETAIL
+        WHERE UUID = (
+            SELECT UUID
+            FROM COMMON_USER
+            WHERE EMAIL = 'go66go66@giens.co.kr'
+        )
+
+2025-06-11T15:32:20.269+09:00 DEBUG 6606 --- [][http-nio-8080-exec-10] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+1. WITH user_groups AS (
+            SELECT DISTINCT GROUP_ID
+            FROM VIMS2.COMMON_USER_GROUP
+            WHERE USER_EMAIL = 'go66go66@giens.co.kr'
+        ),
+             menu_codes AS (
+                 SELECT DISTINCT MENU_CODE
+                 FROM VIMS2.COMMON_ACCESS_GROUP_MENU_LIST
+                 WHERE ACCESS_RIGHTS_GROUP_ID IN (SELECT GROUP_ID FROM user_groups)
+             ),
+             menu_hierarchy (
+                             MENU_CODE,
+                             MENU_NAME,
+                             MENU_NUMBER,
+                             MENU_LEVEL,
+                             TOP_MENU_CODE,
+                             URL,
+                             USE_YN,
+                             system_create_userid,
+                             system_update_userid,
+                             system_update_date,
+                             system_create_date,
+                             menu_sequence
+                 ) AS (
+                 SELECT
+                     MENU_CODE,
+                     MENU_NAME,
+                     MENU_NUMBER,
+                     MENU_LEVEL,
+                     TOP_MENU_CODE,
+                     URL,
+                     USE_YN,
+                     system_create_userid,
+                     system_update_userid,
+                     system_update_date,
+                     system_create_date,
+                     menu_sequence
+                 FROM VIMS2.COMMON_MENU
+                 WHERE MENU_CODE IN (SELECT MENU_CODE FROM menu_codes)
+                 UNION ALL
+                 SELECT
+                     cm.MENU_CODE,
+                     cm.MENU_NAME,
+                     cm.MENU_NUMBER,
+                     cm.MENU_LEVEL,
+                     cm.TOP_MENU_CODE,
+                     cm.URL,
+                     cm.USE_YN,
+                     cm.system_create_userid,
+                     cm.system_update_userid,
+                     cm.system_update_date,
+                     cm.system_create_date,
+                     cm.menu_sequence
+                 FROM VIMS2.COMMON_MENU cm
+                          JOIN menu_hierarchy mh ON cm.MENU_CODE = mh.TOP_MENU_CODE
+                 WHERE mh.MENU_LEVEL IN ('1', '2') AND mh.TOP_MENU_CODE IS NOT NULL
+             )
+        SELECT DISTINCT
+            MENU_CODE,
+            MENU_NAME,
+            MENU_NUMBER,
+            MENU_LEVEL,
+            TOP_MENU_CODE,
+            URL,
+            USE_YN,
+            system_create_userid,
+            system_update_userid,
+            TO_CHAR(system_update_date, 'yyyy-MM-dd HH24:MI:SS') AS system_update_date,
+            TO_CHAR(system_create_date, 'yyyy-MM-dd HH24:MI:SS') AS system_create_date,
+            menu_sequence
+        FROM menu_hierarchy
+        WHERE USE_YN = '1'
+        ORDER BY menu_sequence ASC, MENU_NUMBER ASC
+
+2025-06-11T15:32:20.274+09:00 DEBUG 6606 --- [][http-nio-8080-exec-3] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+2. SELECT
+            n.notice_id,
+            n.title,
+            n.content,
+            n.START_YMD,
+            n.END_YMD,
+            n.START_TIME_CODE,
+            n.END_TIME_CODE,
+            n.left,
+            n.TOP,
+            n.width,
+            n.HEIGHT,
+            n.use_yn,
+            n.SYSTEM_CREATE_DATE,
+            n.system_create_userid,
+            n.system_update_date,
+            n.system_update_userid
+        FROM
+            COMMON_USER_GROUP up
+                JOIN
+            SITE_POPUP_NOTICE_TARGET_GROUP nt ON up.group_id = nt.group_id
+                JOIN
+            SITE_POPUP_NOTICE n ON nt.notice_id = n.notice_id
+        WHERE
+            up.user_email = 'go66go66@giens.co.kr'
+            AND n.use_yn = '1'
+            AND n.START_YMD <= TO_CHAR(SYSDATE,'yyyyMMdd')
+            AND n.END_YMD >= TO_CHAR(SYSDATE,'yyyyMMdd')
+            AND TO_CHAR(SYSDATE, 'HH24:MI:SS') BETWEEN n.START_TIME_CODE AND n.END_TIME_CODE
+
+2025-06-11T15:32:20.277+09:00 DEBUG 6606 --- [][http-nio-8080-exec-1] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+6. SELECT
+            rownum AS no,
+
+            id,
+            email,
+            password,
+            role,
+            user_id,
+            office_code,
+            FN_GET_OFFICE_NAME(office_code) AS office_name,
+            FN_GET_OFFICE_TYPE(office_code) AS office_type,
+            user_name,
+            tel,
+            address,
+            address_detail,
+            postal_code,
+            uuid,
+            system_update_userid,
+            system_update_date,
+            system_create_userid,
+            system_create_date
+        FROM COMMON_USER
+         WHERE 1=1
+
+            AND email='go66go66@giens.co.kr'
+
+2025-06-11T15:32:20.277+09:00 DEBUG 6606 --- [][http-nio-8080-exec-4] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+3. SELECT
+            rownum AS no,
+
+            id,
+            email,
+            password,
+            role,
+            user_id,
+            office_code,
+            FN_GET_OFFICE_NAME(office_code) AS office_name,
+            FN_GET_OFFICE_TYPE(office_code) AS office_type,
+            user_name,
+            tel,
+            address,
+            address_detail,
+            postal_code,
+            uuid,
+            system_update_userid,
+            system_update_date,
+            system_create_userid,
+            system_create_date
+        FROM COMMON_USER
+         WHERE 1=1
+
+            AND email='go66go66@giens.co.kr'
+
+2025-06-11T15:32:20.297+09:00 DEBUG 6606 --- [][http-nio-8080-exec-8] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+4. SELECT
+
+                MAX(CASE WHEN UPPER(CONFIG_KEY) = UPPER('BANNER_AUTO_ROTATE_YN') THEN CONFIG_VALUE END) AS BANNER_AUTO_ROTATE_YN
+             , 
+                MAX(CASE WHEN UPPER(CONFIG_KEY) = UPPER('BANNER_ROTATE_INTERVAL_SEC') THEN CONFIG_VALUE END) AS BANNER_ROTATE_INTERVAL_SEC
+
+        FROM SITE_CONFIG
+        WHERE UPPER(CONFIG_KEY) IN
+         (  
+            UPPER('BANNER_AUTO_ROTATE_YN')
+         , 
+            UPPER('BANNER_ROTATE_INTERVAL_SEC')
+         )
+
+2025-06-11T15:32:20.298+09:00 DEBUG 6606 --- [][http-nio-8080-exec-6] sqlonly:223 -  com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44)
+5. SELECT sbi.uuid,
+               sbi.banner_image_number,
+               sbi.use_yn,
+               cfd.file_id,
+               cfd.file_path,
+               cfd.file_name,
+               cfd.file_extension
+        FROM site_banner_image sbi
+        LEFT JOIN common_file_detail cfd
+        ON sbi.uuid = cfd.uuid
+        AND cfd.system_create_date = (SELECT MAX(system_create_date) FROM common_file_detail WHERE uuid = sbi.uuid)
+         WHERE  sbi.use_yn = '1' 
+        ORDER BY banner_image_number ASC
+
+2025-06-11T15:32:20.413+09:00 WARN  6606 --- [][http-nio-8080-exec-7] ExceptionHandlerExceptionResolver:227 - Resolved [java.io.FileNotFoundException: URL [file:///Users/ikyoungtae/Documents/coding/file/userImgFolder/f6082976-69e9-48e2-ad07-9c10468fc1da.jpeg] cannot be resolved in the file system for checking its content length]
